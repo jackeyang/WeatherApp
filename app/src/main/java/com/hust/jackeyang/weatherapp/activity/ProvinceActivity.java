@@ -33,7 +33,7 @@ public class ProvinceActivity extends Activity {
     private WeatherDB weatherDB;
     private List<String> dataList = new ArrayList<>();
     private List<String> provinceList = null;
-    private List<String> cityList = null;
+
 
 
 
@@ -54,7 +54,8 @@ public class ProvinceActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                String province = dataList.get(i);
+                CityActivity.actionStart(ProvinceActivity.this,province);
             }
         });
 
