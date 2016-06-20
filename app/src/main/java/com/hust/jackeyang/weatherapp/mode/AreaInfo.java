@@ -1,17 +1,17 @@
 package com.hust.jackeyang.weatherapp.mode;
 
-import java.util.List;
 
 /**
  * Created by jackeyang on 2016/6/20.
  */
 public class AreaInfo {
 
-    public AreaInfo(String cityName, String countryName, String ID, String provinceName) {
+    public AreaInfo(String provinceName,String cityName/*, String countryName*/, String ID,Location location) {
         this.cityName = cityName;
-        this.countryName = countryName;
+//        this.countryName = countryName;
         this.ID = ID;
         this.provinceName = provinceName;
+        this.location = location;
     }
 
     public String getCityName() {
@@ -22,13 +22,13 @@ public class AreaInfo {
         this.cityName = cityName;
     }
 
-    public String getCountryName() {
+  /*  public String getCountryName() {
         return countryName;
     }
 
     public void setCountryName(String countryName) {
         this.countryName = countryName;
-    }
+    }*/
 
     public String getID() {
         return ID;
@@ -46,11 +46,21 @@ public class AreaInfo {
         this.provinceName = provinceName;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     private String provinceName;
     private String cityName;
-    private String countryName;
+//    private String countryName;
     private String ID;
+    private Location location;
 
 
 
 }
+

@@ -15,7 +15,8 @@ public class WeatherDBOpenHelper extends SQLiteOpenHelper {
             + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
             + "province text,"
             + "city text,"
-            + "country text,"
+            + "latitude real,"
+            + "longitude real,"
             + "ID text)";
 
 

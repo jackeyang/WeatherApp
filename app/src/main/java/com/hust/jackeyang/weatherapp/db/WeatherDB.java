@@ -47,7 +47,8 @@ public class WeatherDB {
             ContentValues cv = new ContentValues();
             cv.put("province", areaInfo.getProvinceName());
             cv.put("city", areaInfo.getCityName());
-            cv.put("country", areaInfo.getCountryName());
+            cv.put("longitude", areaInfo.getLocation().getLongitude());
+            cv.put("latitude",areaInfo.getLocation().getLatitude());
             cv.put("ID", areaInfo.getID());
             db.insert(TABLE_NAME, null, cv);
         }
@@ -85,7 +86,7 @@ public class WeatherDB {
         return list;
     }
 
-    public List<String> loadCountries(String city) {
+   /* public List<String> loadCountries(String city) {
         ArrayList<String> list = new ArrayList<>();
         Cursor cursor = db.rawQuery("select distinct country from " + TABLE_NAME + " where city = " +
                 "?", new String[]{city});
@@ -95,9 +96,9 @@ public class WeatherDB {
             } while (cursor.moveToNext());
         }
         return list;
-    }
+    }*/
 
-    public List<Country> loadCountries2(String city) {
+/*    public List<Country> loadCountries2(String city) {
         ArrayList<Country> countries = new ArrayList<>();
         Cursor cursor = db.rawQuery("select country ID from " + TABLE_NAME + " where city = ?",
                 new String[]{city});
@@ -110,21 +111,18 @@ public class WeatherDB {
             } while (cursor.moveToNext());
         }
         return countries;
-    }
+    }*/
 
-    public String loadID(String country) {
+    public String loadID(String city) {
         String ID = "";
-        Cursor cursor = db.rawQuery("select ID from " + TABLE_NAME + " where country = ?", new
-                String[]{country});
+        Cursor cursor = db.rawQuery("select ID from " + TABLE_NAME + " where city = ?", new
+                String[]{city});
         if (cursor.moveToFirst()) {
             ID = cursor.getString(0);
         }
         return ID;
     }
 
-    public void loadProvinces(List<String> list) {
-
-    }
 
 
     //改进为异步方式访问数据库
