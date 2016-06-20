@@ -5,11 +5,16 @@ package com.hust.jackeyang.weatherapp.mode;
  * Created by jackeyang on 2016/6/20.
  */
 public class AreaInfo {
+    private String provinceName;
+    private String cityName;
+    //    private String countryName;
+    private String city_id;
+    private Location location;
 
-    public AreaInfo(String provinceName,String cityName/*, String countryName*/, String ID,Location location) {
+    public AreaInfo(String provinceName,String cityName/*, String countryName*/, String city_id,Location location) {
         this.cityName = cityName;
 //        this.countryName = countryName;
-        this.ID = ID;
+        this.city_id = city_id;
         this.provinceName = provinceName;
         this.location = location;
     }
@@ -30,12 +35,12 @@ public class AreaInfo {
         this.countryName = countryName;
     }*/
 
-    public String getID() {
-        return ID;
+    public String getCity_id() {
+        return city_id;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
+    public void setCity_id(String city_id) {
+        this.city_id = city_id;
     }
 
     public String getProvinceName() {
@@ -54,13 +59,34 @@ public class AreaInfo {
         this.location = location;
     }
 
-    private String provinceName;
-    private String cityName;
-//    private String countryName;
-    private String ID;
-    private Location location;
 
 
+
+    public static class Location{
+        private float latitude;
+        private float longitude;
+
+        public Location(float latitude, float longitude) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        public float getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(float latitude) {
+            this.latitude = latitude;
+        }
+
+        public float getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(float longitude) {
+            this.longitude = longitude;
+        }
+    }
 
 }
 

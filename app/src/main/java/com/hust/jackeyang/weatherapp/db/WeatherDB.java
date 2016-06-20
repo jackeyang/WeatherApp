@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.hust.jackeyang.weatherapp.mode.AreaInfo;
-import com.hust.jackeyang.weatherapp.mode.Country;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +48,7 @@ public class WeatherDB {
             cv.put("city", areaInfo.getCityName());
             cv.put("longitude", areaInfo.getLocation().getLongitude());
             cv.put("latitude",areaInfo.getLocation().getLatitude());
-            cv.put("ID", areaInfo.getID());
+            cv.put("city_id", areaInfo.getCity_id());
             db.insert(TABLE_NAME, null, cv);
         }
     }
@@ -113,14 +112,19 @@ public class WeatherDB {
         return countries;
     }*/
 
+    /**
+     * 加载城市的ID
+     * @param city
+     * @return
+     */
     public String loadID(String city) {
-        String ID = "";
-        Cursor cursor = db.rawQuery("select ID from " + TABLE_NAME + " where city = ?", new
+        String city_id = "";
+        Cursor cursor = db.rawQuery("select city_id from " + TABLE_NAME + " where city = ?", new
                 String[]{city});
         if (cursor.moveToFirst()) {
-            ID = cursor.getString(0);
+            city_id = cursor.getString(0);
         }
-        return ID;
+        return city_id;
     }
 
 
