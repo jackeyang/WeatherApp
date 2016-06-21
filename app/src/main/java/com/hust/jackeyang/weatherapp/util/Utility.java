@@ -3,6 +3,7 @@ package com.hust.jackeyang.weatherapp.util;
 import com.hust.jackeyang.weatherapp.db.WeatherDB;
 import com.hust.jackeyang.weatherapp.mode.AreaInfo;
 import com.hust.jackeyang.weatherapp.mode.Basic;
+import com.hust.jackeyang.weatherapp.mode.Code;
 import com.hust.jackeyang.weatherapp.mode.Now;
 import com.hust.jackeyang.weatherapp.mode.Weather;
 import com.orhanobut.logger.Logger;
@@ -29,9 +30,17 @@ public class Utility {
      */
     public static final String WEATHER_ADDR = "https://api.heweather.com/x3/weather?cityid=";
 
+    /**
+     * 获取天气代码的请求接口
+     */
+    public static final String WEATHER_CODE_ADDR = "https://api.heweather" +
+            ".com/x3/condition?search=allcond&key=" + KEY;
+
     private static final String SERVER_CITYINFO_KEY = "city_info";
 
     private static final String SERVER_WEATHER_KEY = "HeWeather data service 3.0";
+
+    private static final String SERVER_WEATHER_CODE_KEY = "cond_info";
 
     public static boolean handleAreaInfoResponse(WeatherDB db, String response) {
         try {
@@ -46,7 +55,8 @@ public class Utility {
                     String city_id = object.getString("id");
                     float longitude = Float.parseFloat(object.getString("lon"));
                     float latitude = Float.parseFloat(object.getString("lat"));
-                    AreaInfo areaInfo = new AreaInfo(provinceName, city, city_id, new AreaInfo.Location
+                    AreaInfo areaInfo = new AreaInfo(provinceName, city, city_id, new AreaInfo
+                            .Location
                             (latitude, longitude));
                     //数据存入数据库内
                     db.saveData(areaInfo);
@@ -61,7 +71,32 @@ public class Utility {
         return false;
     }
 
-    public static Weather parseWeather(String response) {
+    public static boolean handleWeatherCodeResponse(WeatherDB db,String response) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            String status = jsonObject.getString("status");
+            if (status.equals("ok")) {
+                JSONArray jsonArray = jsonObject.getJSONArray(SERVER_WEATHER_CODE_KEY);
+                Code code = new Code();
+                for (int i=0,j=jsonArray.length();i<j;i++) {
+                    JSONObject object = (JSONObject) jsonArray.get(i);
+                    code.setCode(object.getString("code"));
+                    code.setTxt(object.getString("txt"));
+                    code.setTxt_en(object.getString("txt_en"));
+                    code.setIcon(object.getString("icon"));
+                    db.savaCodeData(code);
+                }
+                return true;
+            }else{
+                //由status查看原因
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static Weather handleWeatherInfoResponse(String response) {
 //        Logger.json(response);
         Weather weather = new Weather();
         try {

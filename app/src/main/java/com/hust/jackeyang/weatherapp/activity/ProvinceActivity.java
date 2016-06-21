@@ -46,7 +46,7 @@ public class ProvinceActivity extends Activity {
                 false);
         listView = (ListView) findViewById(R.id.list_view);
         listView.setEmptyView(empty_view);
-        title = (TextView) findViewById(R.id.title_text);
+        title = (TextView) findViewById(R.id.txt_title);
         weatherDB = WeatherDB.getInstance(getApplicationContext());
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);

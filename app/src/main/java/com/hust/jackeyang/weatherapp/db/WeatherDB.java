@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.hust.jackeyang.weatherapp.mode.AreaInfo;
+import com.hust.jackeyang.weatherapp.mode.Code;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +18,17 @@ import java.util.List;
 public class WeatherDB {
     private static final String DB_NAME = "weather.db";
 
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
-    private static final String TABLE_NAME = WeatherDBOpenHelper.TABLE_NAME;
+    /**
+     * 地区信息表
+     */
+    private static final String TABLE_AREAINFO = WeatherDBOpenHelper.TABLE_NAME;
+
+    /**
+     * 天气代码表
+     */
+    private static final String TABLE_WEATHER_CODE = WeatherDBOpenHelper.TABLE_NAME_WEATHER_CODE;
 
     private static WeatherDB weatherDB = null;
 
@@ -49,22 +58,26 @@ public class WeatherDB {
             cv.put("longitude", areaInfo.getLocation().getLongitude());
             cv.put("latitude",areaInfo.getLocation().getLatitude());
             cv.put("city_id", areaInfo.getCity_id());
-            db.insert(TABLE_NAME, null, cv);
+            db.insert(TABLE_AREAINFO, null, cv);
+        }
+    }
+
+    public void savaCodeData(Code code) {
+        if (code != null) {
+            ContentValues cv = new ContentValues();
+            cv.put("code", code.getCode());
+            cv.put("txt", code.getTxt());
+            cv.put("txt_en", code.getTxt_en());
+            cv.put("icon", code.getIcon());
+            db.insert(TABLE_WEATHER_CODE, null, cv);
         }
     }
 
 
-    //开启数据库事务进行提交
-    public void saveDataByTransaction(List<AreaInfo> datas) {
-        for(int i=0,j=datas.size();i<j;i++) {
-
-            db.beginTransaction();
-        }
-    }
 
     public List<String> loadProvinces() {
         ArrayList<String> list = new ArrayList<>();
-        Cursor cursor = db.rawQuery("select distinct province from " + TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("select distinct province from " + TABLE_AREAINFO, null);
         if (cursor.moveToFirst()) {
             do {
                 list.add(cursor.getString(0));
@@ -75,7 +88,7 @@ public class WeatherDB {
 
     public List<String> loadCities(String province) {
         ArrayList<String> list = new ArrayList<>();
-        Cursor cursor = db.rawQuery("select distinct city from " + TABLE_NAME + " where province = " +
+        Cursor cursor = db.rawQuery("select distinct city from " + TABLE_AREAINFO + " where province = " +
                 "?", new String[]{province});
         if (cursor.moveToFirst()) {
             do {
@@ -85,32 +98,6 @@ public class WeatherDB {
         return list;
     }
 
-   /* public List<String> loadCountries(String city) {
-        ArrayList<String> list = new ArrayList<>();
-        Cursor cursor = db.rawQuery("select distinct country from " + TABLE_NAME + " where city = " +
-                "?", new String[]{city});
-        if (cursor.moveToFirst()) {
-            do {
-                list.add(cursor.getString(0));
-            } while (cursor.moveToNext());
-        }
-        return list;
-    }*/
-
-/*    public List<Country> loadCountries2(String city) {
-        ArrayList<Country> countries = new ArrayList<>();
-        Cursor cursor = db.rawQuery("select country ID from " + TABLE_NAME + " where city = ?",
-                new String[]{city});
-        if (cursor.moveToFirst()) {
-            do {
-                String countryName = cursor.getString(cursor.getColumnIndex("country"));
-                String ID = cursor.getString(cursor.getColumnIndex("ID"));
-                Country country = new Country(countryName, ID);
-                countries.add(country);
-            } while (cursor.moveToNext());
-        }
-        return countries;
-    }*/
 
     /**
      * 加载城市的ID
@@ -119,7 +106,7 @@ public class WeatherDB {
      */
     public String loadID(String city) {
         String city_id = "";
-        Cursor cursor = db.rawQuery("select city_id from " + TABLE_NAME + " where city = ?", new
+        Cursor cursor = db.rawQuery("select city_id from " + TABLE_AREAINFO + " where city = ?", new
                 String[]{city});
         if (cursor.moveToFirst()) {
             city_id = cursor.getString(0);
@@ -128,6 +115,15 @@ public class WeatherDB {
     }
 
 
+    public String loadIconURL(String code) {
+        String url = "";
+        Cursor cursor = db.rawQuery("select icon from " + TABLE_WEATHER_CODE + " where code = ?",
+                new String[]{code});
+        if (cursor.moveToFirst()) {
+            url = cursor.getString(0);
+        }
+        return url;
+    }
 
     //改进为异步方式访问数据库
     class LoadProvince extends AsyncTask<Void, Void, List<String>>{

@@ -18,7 +18,6 @@ import com.hust.jackeyang.weatherapp.mode.Weather;
 import com.hust.jackeyang.weatherapp.util.HttpCallbackListener;
 import com.hust.jackeyang.weatherapp.util.HttpUtil;
 import com.hust.jackeyang.weatherapp.util.Utility;
-import com.orhanobut.logger.Logger;
 
 /**
  * Created by jackeyang on 2016/6/21.
@@ -26,9 +25,11 @@ import com.orhanobut.logger.Logger;
 public class WeatherActivity extends Activity {
 
     private String city = null;
+    private String code = null;
     WeatherDB weatherDB = null;
     Weather weatherInfo = null;
     ImageView imageView = null;
+    TextView txt_desc = null;
     TextView txt_publish_time = null;
     TextView txt_city_title = null;
     TextView txt_temperature = null;
@@ -54,8 +55,9 @@ public class WeatherActivity extends Activity {
     private void init() {
         this.weatherDB = WeatherDB.getInstance(getApplicationContext());
         this.imageView = (ImageView) findViewById(R.id.imageView);
+        this.txt_desc = (TextView) findViewById(R.id.txt_desc);
         this.txt_publish_time = (TextView) findViewById(R.id.publish_time);
-        this.txt_city_title = (TextView) findViewById(R.id.title_text);
+        this.txt_city_title = (TextView) findViewById(R.id.txt_title);
         this.txt_temperature = (TextView) findViewById(R.id.temperature);
         this.txt_wind = (TextView) findViewById(R.id.wind);
         this.btn_refresh = (Button) findViewById(R.id.refresh);
@@ -69,16 +71,25 @@ public class WeatherActivity extends Activity {
         txt_temperature.setText("现在气温：" + temperature + "度");
         String windInfo = getWindInfo(weatherInfo.getNow().getWind());
         txt_wind.setText(windInfo);
+        String desc = weatherInfo.getNow().getCond().txt;
+        txt_desc.setText(desc);
     }
 
+    /**
+     * 请求天气数据
+     * @param city
+     */
     private void queryWeather(String city) {
         if (!TextUtils.isEmpty(city)) {
             showProgressDialog();
             HttpUtil.sendHttpRequest(assembleAdder(city), new HttpCallbackListener() {
                 @Override
                 public void onFinish(String response) {
-                    weatherInfo = Utility.parseWeather(response);
-                    String a = weatherInfo.getBasic().getUpdate().loc;
+                    weatherInfo = Utility.handleWeatherInfoResponse(response);
+                    //获取天气代码
+                    code = weatherInfo.getNow().getCond().code;
+                    //根据天气代码加载天气图标
+                    loadWeatherIcon(imageView);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -100,8 +111,44 @@ public class WeatherActivity extends Activity {
                     });
                 }
             });
+
+
         }
 
+    }
+
+    private void loadWeatherIcon(ImageView imageView) {
+        String icon_url = weatherDB.loadIconURL(code);
+        if (!TextUtils.isEmpty(icon_url)) {
+            HttpUtil.downLoadIcon(icon_url,imageView);
+        } else {
+            queryWeatherIconFromServer();
+        }
+    }
+
+    /**
+     * 完成天气代码的下载和保存
+     */
+    private void queryWeatherIconFromServer() {
+        HttpUtil.sendHttpRequest(Utility.WEATHER_CODE_ADDR, new HttpCallbackListener() {
+            @Override
+            public void onFinish(String response) {
+                boolean result = Utility.handleWeatherCodeResponse(weatherDB,response);
+                if (result) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadWeatherIcon(imageView);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private String assembleAdder(String city) {

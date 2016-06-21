@@ -39,7 +39,7 @@ public class CityActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.area_layout);
         this.weatherDB = WeatherDB.getInstance(getApplicationContext());
-        this.title = (TextView) findViewById(R.id.title_text);
+        this.title = (TextView) findViewById(R.id.txt_title);
         this.list = (ListView) findViewById(R.id.list_view);
         province = getIntent().getStringExtra("province");
         this.title.setText(province);
