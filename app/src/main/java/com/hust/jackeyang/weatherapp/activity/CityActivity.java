@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,6 +45,12 @@ public class CityActivity extends Activity {
         this.title.setText(province);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, city_list_data);
         this.list.setAdapter(adapter);
+        this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                WeatherActivity.actionStart(CityActivity.this,city_list_data.get(i));
+            }
+        });
         queryCities();
     }
 

@@ -5,6 +5,7 @@ import com.hust.jackeyang.weatherapp.mode.AreaInfo;
 import com.hust.jackeyang.weatherapp.mode.Basic;
 import com.hust.jackeyang.weatherapp.mode.Now;
 import com.hust.jackeyang.weatherapp.mode.Weather;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,8 +17,17 @@ import org.json.JSONObject;
 public class Utility {
 
     public static final String KEY = "e11db3d0deea48aeb0dc841c53393fd4";
+
+    /**
+     * 获取中国所有的城市及其ID信息的请求接口
+     */
     public static final String AREAINFO_ADDR = "https://api.heweather" +
             ".com/x3/citylist?search=allchina&key=" + KEY;
+
+    /**
+     * 获取城市天气的请求接口
+     */
+    public static final String WEATHER_ADDR = "https://api.heweather.com/x3/weather?cityid=";
 
     private static final String SERVER_CITYINFO_KEY = "city_info";
 
@@ -52,6 +62,7 @@ public class Utility {
     }
 
     public static Weather parseWeather(String response) {
+//        Logger.json(response);
         Weather weather = new Weather();
         try {
             JSONObject jsonObject = new JSONObject(response);
@@ -76,7 +87,7 @@ public class Utility {
                 JSONObject windObject = nowObject.getJSONObject("wind");
                 Now now = new Now();
                 now.setTmp(nowObject.getString("tmp"));
-                now.setFl(nowObject.getString("f1"));
+                now.setFl(nowObject.getString("fl"));
                 Now.Wind wind = new Now.Wind(windObject.getString("deg"), windObject.getString
                         ("dir"), windObject.getString("sc"), windObject.getString("spd"));
                 now.setWind(wind);

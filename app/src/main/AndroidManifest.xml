@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.CityActivity"/>
+        <activity android:name=".activity.WeatherActivity"/>
 
     </application>
 
